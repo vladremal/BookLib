@@ -1,0 +1,27 @@
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    <group>
+        <item
+            android:id="@+id/search"
+            android:contentDescription="@string/top_bar_search_content_description"
+            android:icon="@drawable/ic_search_24dp"
+            android:title="@string/top_bar_search_title"
+            app:actionViewClass="android.widget.SearchView"
+            app:showAsAction="ifRoom" />
+
+        <item
+            android:id="@+id/cd_collection_checkbox"
+            android:contentDescription="@string/top_bar_checklist_content_description"
+            android:icon="@drawable/baseline_more_vert_24"
+            android:title="@string/top_bar_checklist_title"
+            app:showAsAction="ifRoom" />
+        <item
+            android:id="@+id/cd_collection_multiChoise"
+            android:contentDescription="@string/top_bar_checklist_content_description"
+            android:icon="@drawable/checklist_rtl_24"
+            android:title="@string/top_bar_checklist_title"
+            app:showAsAction="ifRoom" />
+    </group>
+
+
+</menu>

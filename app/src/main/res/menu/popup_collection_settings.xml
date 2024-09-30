@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <group>
+        <item android:id="@+id/pu_bkcl_edit" android:title="@string/pu_cst_edit_title"/>
+        <item android:id="@+id/pu_bkcl_delete" android:title="@string/pu_cst_delete_title"/>
+    </group>
+</menu>

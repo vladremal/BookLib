@@ -1,0 +1,47 @@
+<resources>
+
+    <!-- Top App Bar -->
+    <string name="app_name">BookLib</string>
+    <string name="top_bar_search_title">Поиск</string>
+    <string name="top_bar_search_content_description">Поиск</string>
+    <string name="top_bar_checklist_title">Выбор</string>
+    <string name="top_bar_checklist_content_description">Выбор</string>
+    <string name="header_title">BookLib</string>
+    <string name="header_text">Vladislav Remizov</string>
+    <string name="tab_text_1">Книги</string>
+    <string name="tab_text_2">Полки</string>
+    <!-- Top App Bar -->
+
+    <!-- Alert Dialogs String -->
+    <string name="alert_coll_create_title">Создание полки</string>
+    <string name="alert_coll_change_title">Редактирование полки</string>
+    <string name="alert_coll_delete_title">Удаление полки</string>
+
+    <string name="alert_coll_create_posBtn">Создание полки</string>
+    <string name="alert_coll_change_posBtn">Изменить</string>
+    <string name="alert_coll_delete_posBtn">Удалить</string>
+
+    <string name="alert_lnbk_add_title">Добавить на полку</string>
+    <string name="alert_lnbk_add_posBtn">Добавить</string>
+    <string name="alert_lnbk_delete_title">Убрать книгу с полки</string>
+    <string name="alert_lnbk_delete_posBtn">Убрать</string>
+
+    <string name="alert_book_delete_title">Удаление книги</string>
+
+    <string name="alert_cancel">Отменить</string>
+    <!-- Alert Dialogs String -->
+
+    <!-- Collection PopUp Menu -->
+    <string name="pu_cst_edit_title">Редактировать</string>
+    <string name="pu_cst_delete_title">Удалить</string>
+    <!-- Collection PopUp Menu -->
+
+    <!-- Book PopUp Settings Menu -->
+    <string name="pu_bk_update_score">Установить оценку</string>
+    <string name="pu_bk_link_title">На полку</string>
+    <string name="pu_bk_delete_title">Удалить</string>
+    <!-- Book PopUp Menu -->
+
+
+
+</resources>
