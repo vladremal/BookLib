@@ -110,6 +110,11 @@ public class BookAdapter extends RecyclerView.Adapter<BookAdapter.ViewHolder> {
                             });
                         }
                         return true;
+                    } else if (item.getItemId() == R.id.pu_update_score){
+                        BLAlertDialog.updateBookScoreDialog(context, book.getName(), newScore -> {
+                            holder.bookScoreView.setText(String.valueOf(newScore));
+                        });
+                        return true;
                     }
                     return false;
                 });
