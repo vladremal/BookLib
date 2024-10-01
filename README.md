@@ -1,4 +1,4 @@
-# BookLib v0.0.1
+# BookLib v1.0.1
 
 The app is written for the project
 
