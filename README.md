@@ -1,3 +1,4 @@
-# BookLib
+# BookLib v0.0.1
 
-Приложение для чтения PDF - файлов
+The app is written for the project
+Perhaps I will add more in the future
