@@ -40,7 +40,7 @@ dependencies {
     implementation(libs.activity)
     implementation(libs.constraintlayout)
 
-    implementation("com.github.barteksc:android-pdf-viewer:3.2.0-beta.1")
+    implementation ("com.github.DImuthuUpe:AndroidPdfViewer:3.1.0-beta.1")
 
     testImplementation(libs.junit)
     androidTestImplementation(libs.ext.junit)

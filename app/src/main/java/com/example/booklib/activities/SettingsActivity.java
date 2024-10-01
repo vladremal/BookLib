@@ -18,6 +18,13 @@ public  class SettingsActivity extends AppCompatActivity {
     private boolean isNightTheme = false;
     private SwitchMaterial switchMaterial;
     private MaterialToolbar toolbar;
+
+    /**
+     * This activity displays the settings screen of the application.
+     * It contains a switch to toggle between light and dark themes.
+     * It also contains a MaterialToolbar with a navigation menu.
+     */
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -44,6 +51,9 @@ public  class SettingsActivity extends AppCompatActivity {
             finish();
         });
     }
+    /**
+     * This method checks the current theme of the application and sets the switch accordingly.
+     */
 
     private void syncTheme() {
         TypedValue typedValue = new TypedValue();

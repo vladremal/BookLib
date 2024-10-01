@@ -5,6 +5,10 @@ import android.content.Intent;
 import java.util.function.Consumer;
 
 public final class BLExplorer {
+    /**
+     * Метод для запуска эксплорера
+     * @param consumer интерфейс для выполнения действий после завершения работы метода
+     */
     public static void startExplorer(Consumer<Intent> consumer){
         Intent intent = new Intent(Intent.ACTION_OPEN_DOCUMENT);
         intent.addCategory(Intent.CATEGORY_OPENABLE);
@@ -15,3 +19,4 @@ public final class BLExplorer {
         consumer.accept(intent);
     }
 }
+

@@ -95,18 +95,18 @@ public final class BLAlertDialog {
      * Creates an alert dialog for deleting a book collection.
      *
      * @param context The context of the application.
-     * @param collectionId The id of the collection to delete.
+     * @param colName The id of the collection to delete.
      * @param onComplete A runnable that is run when the dialog is completed.
      */
 
-    public static void deleteBookCollectionDialog(Context context, int collectionId, Runnable onComplete) {
+    public static void deleteBookCollectionDialog(Context context, String colName, Runnable onComplete) {
         if (context != null) {
             android.app.AlertDialog.Builder builder = new android.app.AlertDialog.Builder(new ContextThemeWrapper(context, androidx.appcompat.R.style.AlertDialog_AppCompat));
             builder.setTitle(R.string.alert_coll_delete_title);
 
             builder.setPositiveButton(R.string.alert_coll_delete_posBtn, (dialog, which) -> {
                 SQLiteDb sqLiteDb = new SQLiteDb(context);
-                sqLiteDb.deleteBookCollection(collectionId);
+                sqLiteDb.deleteBookCollection(colName);
                 onComplete.run();
             });
             builder.setNegativeButton(R.string.alert_cancel, (dialog, which) -> dialog.cancel());
@@ -139,11 +139,11 @@ public final class BLAlertDialog {
 
             builder.setPositiveButton(R.string.alert_lnbk_add_posBtn, (dialog, which) -> {
                 if (mSpinner.getSelectedItem() != null && mSpinner.getSelectedItem() instanceof BookCollection) {
-                    int collectionId = ((BookCollection) mSpinner.getSelectedItem()).getId();
+                    String colName = ((BookCollection) mSpinner.getSelectedItem()).getName();
                     if (!books.isEmpty()) {
                         for (Book book : books) {
                             if (book.isSelected()) {
-                                sqLiteDb.insertLinkedBook(book.getId(), collectionId, SQlResult -> {
+                                sqLiteDb.insertLinkedBook(book.getName(), colName, SQlResult -> {
                                 });
                             }
                         }
@@ -167,10 +167,10 @@ public final class BLAlertDialog {
      * Creates an alert dialog for linking a single book to a collection.
      *
      * @param context The context of the application.
-     * @param bookId The id of the book to link.
+     * @param bookName The id of the book to link.
      */
 
-    public static void linkBookDialog(Context context, int bookId) {
+    public static void linkBookDialog(Context context, String bookName) {
         if (context != null) {
             AlertDialog.Builder builder = new AlertDialog.Builder(new ContextThemeWrapper(context, androidx.appcompat.R.style.AlertDialog_AppCompat));
             LayoutInflater li = LayoutInflater.from(context);
@@ -187,7 +187,8 @@ public final class BLAlertDialog {
 
             builder.setPositiveButton(R.string.alert_lnbk_add_posBtn, (dialog, which) -> {
                 if (mSpinner.getSelectedItem() != null && mSpinner.getSelectedItem() instanceof BookCollection) {
-                    sqLiteDb.insertLinkedBook(bookId, ((BookCollection) mSpinner.getSelectedItem()).getId(), SQLResult -> {
+                    String colName = ((BookCollection) mSpinner.getSelectedItem()).getName();
+                    sqLiteDb.insertLinkedBook(bookName, colName, SQLResult -> {
                         if (SQLResult) {
                             Toast.makeText(context, "Книга успешна добавлена на полку \"" + ((BookCollection) mSpinner.getSelectedItem()).getName() + "\"", Toast.LENGTH_SHORT).show();
                         } else {
@@ -211,19 +212,19 @@ public final class BLAlertDialog {
      * Creates an alert dialog for deleting a linked book from a collection.
      *
      * @param context The context of the application.
-     * @param bookId The id of the book to delete.
-     * @param collectionId The id of the collection to delete the book from.
+     * @param bookName The id of the book to delete.
+     * @param collectionName The id of the collection to delete the book from.
      * @param onComplete A runnable that is run when the dialog is completed.
      */
 
-    public static void deleteLinkedBookDialog(Context context, int bookId, int collectionId, Runnable onComplete) {
+    public static void deleteLinkedBookDialog(Context context, String bookName, String collectionName, Runnable onComplete) {
         if (context != null) {
             android.app.AlertDialog.Builder builder = new android.app.AlertDialog.Builder(new ContextThemeWrapper(context, androidx.appcompat.R.style.AlertDialog_AppCompat));
             builder.setTitle(R.string.alert_lnbk_delete_title);
 
             builder.setPositiveButton(R.string.alert_lnbk_delete_posBtn, (dialog, which) -> {
                 SQLiteDb sqLiteDb = new SQLiteDb(context);
-                sqLiteDb.deleteLinkedBook(bookId, collectionId);
+                sqLiteDb.deleteLinkedBook(bookName, collectionName);
                 onComplete.run();
             });
             builder.setNegativeButton(R.string.alert_cancel, (dialog, which) -> dialog.cancel());
@@ -235,18 +236,18 @@ public final class BLAlertDialog {
      * Creates an alert dialog for deleting a book.
      *
      * @param context The context of the application.
-     * @param bookId The id of the book to delete.
+     * @param bookName The id of the book to delete.
      * @param onComplete A runnable that is run when the dialog is completed.
      */
 
-    public static void deleteBookDialog(Context context, int bookId, Runnable onComplete) {
+    public static void deleteBookDialog(Context context, String bookName, Runnable onComplete) {
         if (context != null) {
             android.app.AlertDialog.Builder builder = new android.app.AlertDialog.Builder(new ContextThemeWrapper(context, androidx.appcompat.R.style.AlertDialog_AppCompat));
             builder.setTitle(R.string.alert_book_delete_title);
 
             builder.setPositiveButton(R.string.alert_coll_delete_posBtn, (dialog, which) -> {
                 SQLiteDb sqLiteDb = new SQLiteDb(context);
-                sqLiteDb.deleteBook(bookId);
+                sqLiteDb.deleteBook(bookName);
                 onComplete.run();
             });
             builder.setNegativeButton(R.string.alert_cancel, (dialog, which) -> dialog.cancel());
@@ -258,11 +259,11 @@ public final class BLAlertDialog {
      * Creates an alert dialog for updating the score of a book.
      *
      * @param context The context of the application.
-     * @param bookId The id of the book to update the score of.
+     * @param bookName The id of the book to update the score of.
      * @param consumer A consumer that accepts a Float when the dialog is completed.
      */
 
-    public static void updateBookScoreDialog(Context context, int bookId, Consumer<Float> consumer) {
+    public static void updateBookScoreDialog(Context context, String  bookName, Consumer<Float> consumer) {
         if (context != null) {
             SQLiteDb sqLiteDb = new SQLiteDb(context);
             AlertDialog.Builder builder = new AlertDialog.Builder(new ContextThemeWrapper(context, androidx.appcompat.R.style.AlertDialog_AppCompat));
@@ -284,7 +285,7 @@ public final class BLAlertDialog {
             builder.setView(ratingBarContainer);
 
             builder.setPositiveButton("Обновить", (dialog, which) -> {
-                sqLiteDb.updateBookScore(bookId, ratingBar.getRating());
+                sqLiteDb.updateBookScore(bookName, ratingBar.getRating());
                 consumer.accept(ratingBar.getRating());
             });
             builder.setNegativeButton(R.string.alert_cancel, ((dialog, which) -> {
