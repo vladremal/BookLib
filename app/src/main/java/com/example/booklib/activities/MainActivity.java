@@ -1,13 +1,18 @@
 package com.example.booklib.activities;
 
+import android.Manifest;
 import android.animation.Animator;
 import android.annotation.SuppressLint;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.graphics.Color;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
+import android.os.Environment;
 import android.provider.OpenableColumns;
+import android.provider.Settings;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.LinearLayout;
@@ -20,6 +25,8 @@ import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.RecyclerView;
@@ -301,6 +308,7 @@ public class MainActivity extends AppCompatActivity {
 
     private void filterBooks(ArrayList<Book> books, String query, Consumer<ArrayList<Book>> consumer) {
         ArrayList<Book> filtredBooks = new ArrayList<>();
+        query = query.toLowerCase();
         for (Book book : books) {
             if (book.getName().toLowerCase().contains(query)) {
                 filtredBooks.add(book);
@@ -311,6 +319,7 @@ public class MainActivity extends AppCompatActivity {
 
     private void filterBookCollections(ArrayList<BookCollection> bookCollections, String query, Consumer<ArrayList<BookCollection>> consumer) {
         ArrayList<BookCollection> filtredBookCollections = new ArrayList<>();
+        query = query.toLowerCase();
         for (BookCollection book : bookCollections) {
             if (book.getName().toLowerCase().contains(query)) {
                 filtredBookCollections.add(book);
@@ -327,7 +336,12 @@ public class MainActivity extends AppCompatActivity {
 
                     String fileName = getFileName(data.getData());
 
-                    Book book = new Book(fileName, data.getData().toString(), 1);
+                    Uri bookPath = data.getData();
+
+                    int takeFlags = data.getFlags() & (Intent.FLAG_GRANT_READ_URI_PERMISSION | Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
+                    getContentResolver().takePersistableUriPermission(bookPath, takeFlags);
+
+                    Book book = new Book(fileName, bookPath.toString(), 1);
 
                     BookFragment bookFragment = (BookFragment) getSupportFragmentManager().findFragmentByTag(BLDictionary.BOOK_FRAGMENT_TAG);
                     if (bookFragment != null) {
@@ -347,6 +361,7 @@ public class MainActivity extends AppCompatActivity {
                         sqLiteDb.insertBook(book, sqlResult -> {
                             if (sqlResult) {
                                 Toast.makeText(MainActivity.this, "Книга \"" + fileName + "\" успешно добавлена", Toast.LENGTH_SHORT).show();
+                                setTabSelected(BLDictionary.BOOK_FRAGMENT_TAG);
                             } else {
                                 Toast.makeText(MainActivity.this, "Такая книга уже добавлена!", Toast.LENGTH_SHORT).show();
                             }

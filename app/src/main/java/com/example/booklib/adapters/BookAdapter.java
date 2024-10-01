@@ -2,8 +2,6 @@ package com.example.booklib.adapters;
 
 import android.content.Context;
 import android.content.Intent;
-import android.graphics.Color;
-import android.util.Pair;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -11,17 +9,14 @@ import android.widget.CheckBox;
 import android.widget.ImageButton;
 import android.widget.PopupMenu;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
-import androidx.cardview.widget.CardView;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.booklib.R;
 import com.example.booklib.activities.BookCollectionReadActivity;
 import com.example.booklib.activities.BookReadActivity;
 import com.example.booklib.activities.MainActivity;
-import com.example.booklib.database.SQLiteDb;
 import com.example.booklib.dialogs.BLAlertDialog;
 import com.example.booklib.dictonary.BLDictionary;
 import com.example.booklib.models.Book;
@@ -34,7 +29,7 @@ public class BookAdapter extends RecyclerView.Adapter<BookAdapter.ViewHolder> {
 
     private Context context;
     private ArrayList<Book> books;
-    private int collectionId = -1;
+    private String collectionName;
     private boolean multiChoise;
 
     public BookAdapter(Context context, ArrayList<Book> books, boolean multiChoise) {
@@ -43,10 +38,10 @@ public class BookAdapter extends RecyclerView.Adapter<BookAdapter.ViewHolder> {
         this.multiChoise = multiChoise;
     }
 
-    public BookAdapter(Context context, ArrayList<Book> books, int collectionId, boolean multiChoise) {
+    public BookAdapter(Context context, ArrayList<Book> books, String collectionName, boolean multiChoise) {
         this.context = context;
         this.books = books;
-        this.collectionId = collectionId;
+        this.collectionName = collectionName;
         this.multiChoise = multiChoise;
     }
 
@@ -72,7 +67,7 @@ public class BookAdapter extends RecyclerView.Adapter<BookAdapter.ViewHolder> {
 
         holder.bookCardView.setOnClickListener(v -> {
             Intent intent = new Intent(context, BookReadActivity.class);
-            intent.putExtra(BLDictionary.BOOK_ID, book.getId());
+            intent.putExtra(BLDictionary.BOOK_NAME, book.getName());
             context.startActivity(intent);
         });
 
@@ -85,17 +80,17 @@ public class BookAdapter extends RecyclerView.Adapter<BookAdapter.ViewHolder> {
             if (context instanceof MainActivity) {
                 popupMenu.setOnMenuItemClickListener(item -> {
                     if (item.getItemId() == R.id.pu_bk_link) {
-                        BLAlertDialog.linkBookDialog(context, book.getId());
+                        BLAlertDialog.linkBookDialog(context, book.getName());
                         return true;
                     } else if (item.getItemId() == R.id.pu_bk_delete) {
-                        BLAlertDialog.deleteBookDialog(context, book.getId(), () -> {
+                        BLAlertDialog.deleteBookDialog(context, book.getName(), () -> {
                             books.remove(position);
                             notifyItemRemoved(position);
                             notifyItemRangeChanged(position, books.size());
                         });
                         return true;
                     } else if (item.getItemId() == R.id.pu_update_score){
-                        BLAlertDialog.updateBookScoreDialog(context, book.getId(), newScore -> {
+                        BLAlertDialog.updateBookScoreDialog(context, book.getName(), newScore -> {
                             holder.bookScoreView.setText(String.valueOf(newScore));
                         });
                         return true;
@@ -107,8 +102,8 @@ public class BookAdapter extends RecyclerView.Adapter<BookAdapter.ViewHolder> {
                 popupMenu.getMenu().removeItem(R.id.pu_bk_link);
                 popupMenu.setOnMenuItemClickListener(item -> {
                     if (item.getItemId() == R.id.pu_bk_delete) {
-                        if (collectionId != -1) {
-                            BLAlertDialog.deleteLinkedBookDialog(context, book.getId(), collectionId, () -> {
+                        if (!collectionName.equals("")) {
+                            BLAlertDialog.deleteLinkedBookDialog(context, book.getName(), collectionName, () -> {
                                 books.remove(position);
                                 notifyItemRemoved(position);
                                 notifyItemRangeChanged(position, books.size());

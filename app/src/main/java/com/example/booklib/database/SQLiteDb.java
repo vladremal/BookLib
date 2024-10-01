@@ -8,14 +8,11 @@ import android.database.sqlite.SQLiteOpenHelper;
 
 import androidx.annotation.Nullable;
 
-import com.example.booklib.dictonary.BLDictionary;
 import com.example.booklib.models.Book;
 import com.example.booklib.models.BookCollection;
 
 import java.util.ArrayList;
 import java.util.function.Consumer;
-
-import kotlin.Pair;
 
 public class SQLiteDb extends SQLiteOpenHelper {
 
@@ -36,6 +33,9 @@ public class SQLiteDb extends SQLiteOpenHelper {
     public static final String LINKING_BOOK_ID_COLUMN = "bcl_book_id";
     public static final String LINKING_COLLECTION_ID_COLUMN = "bcl_collection_id";
 
+    /**
+     * Класс для работы с базой данных SQLite
+     */
     public SQLiteDb(@Nullable Context context) {
         super(context, DATABASE_NAME, null, SCHEMA);
     }
@@ -51,7 +51,7 @@ public class SQLiteDb extends SQLiteOpenHelper {
 /*        db.execSQL("INSERT INTO " + COLLECTIONS_TABLE_NAME + " (" + COLLECTION_NAME_COLUMN + ") " + "VALUES" + " (" + "'Читаю сейчас'" + "), "
                 + "(" + "'Избранное'" + "), " + "(" + "'Хочу прочитать'" + ")");*/
 
-        db.execSQL("CREATE TABLE " + BOOKS_TABLE_NAME + " (" + BOOK_ID_COLUMN + " INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, " + BOOK_NAME_COLUMN + " VARCHAR(255) UNIQUE NOT NULL," + BOOK_PATH_COLUMN + " VARCHAR(255) NOT NULL,"
+        db.execSQL("CREATE TABLE " + BOOKS_TABLE_NAME + " (" + BOOK_ID_COLUMN + " INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, " + BOOK_NAME_COLUMN + " VARCHAR(255) UNIQUE NOT NULL," + BOOK_PATH_COLUMN + " VARCHAR(500) NOT NULL,"
                 + BOOK_SCORE_COLUMN + " INTEGER NOT NULL, " + "CHECK " + "(" + BOOK_SCORE_COLUMN + " >= 1 AND " + BOOK_SCORE_COLUMN + " <= 10));");
 
         db.execSQL("CREATE TABLE " + LINKING_TABLE_NAME + "(" + LINKING_LINK_ID_COLUMN + " INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, " + LINKING_BOOK_ID_COLUMN + " INTEGER NOT NULL, " + LINKING_COLLECTION_ID_COLUMN + " INTEGER NOT NULL, "
@@ -103,6 +103,25 @@ public class SQLiteDb extends SQLiteOpenHelper {
     }
 
     /**
+     * Возвращает ID коллекции по ее имени
+     * @param collectionName имя коллекции
+     * @return ID коллекции
+     */
+
+    public int getCollectionIdByName(String collectionName) {
+        SQLiteDatabase sqLiteDatabase = this.getReadableDatabase();
+        Cursor result = sqLiteDatabase.rawQuery("SELECT * FROM " + COLLECTIONS_TABLE_NAME + " WHERE " + COLLECTION_NAME_COLUMN + " =? ", new String[]{collectionName});
+        if (result.moveToPosition(0)) {
+            do {
+                return result.getInt(0);
+
+            } while (result.moveToNext());
+        }
+        result.close();
+        return -1;
+    }
+
+    /**
      * Добавляет новую коллекцию типа {@link BookCollection} в бд
      *
      * @param bookCollection коллекция для добавления в бд
@@ -148,8 +167,7 @@ public class SQLiteDb extends SQLiteOpenHelper {
         SQLiteDatabase sqLiteDatabase = this.getWritableDatabase();
         for (BookCollection bookCollection : bookCollections){
             if (bookCollection.isSelected()) {
-                sqLiteDatabase.delete(COLLECTIONS_TABLE_NAME, COLLECTION_ID_COLUMN + "=?", new String[]{String.valueOf(bookCollection.getId())});
-                //bookCollections.remove(bookCollection);
+                sqLiteDatabase.delete(COLLECTIONS_TABLE_NAME, COLLECTION_NAME_COLUMN + "=?", new String[]{bookCollection.getName()});
             }
         }
         sqLiteDatabase.close();
@@ -157,12 +175,13 @@ public class SQLiteDb extends SQLiteOpenHelper {
     }
 
     /**
-     * Удаляет запись в БД по ID
-     * @param colId
+     * Удаляет запись в БД по имени колекции
+     * @param colName имя коллекции
      */
-    public void deleteBookCollection(int colId) {
+
+    public void deleteBookCollection(String colName) {
         SQLiteDatabase sqLiteDatabase = this.getWritableDatabase();
-        sqLiteDatabase.delete(COLLECTIONS_TABLE_NAME, COLLECTION_ID_COLUMN + "=?", new String[]{String.valueOf(colId)});
+        sqLiteDatabase.delete(COLLECTIONS_TABLE_NAME, COLLECTION_NAME_COLUMN + "=?", new String[]{colName});
         sqLiteDatabase.close();
     }
 
@@ -198,10 +217,40 @@ public class SQLiteDb extends SQLiteOpenHelper {
     }
 
     /**
+     * Возвращает книгу по имени
+     * @param bookName имя книги
+     * @return объект типа {@link Book}
+     */
+    public Book getBookByName(String bookName) {
+        SQLiteDatabase sqLiteDatabase = this.getReadableDatabase();
+        Cursor result = sqLiteDatabase.rawQuery("SELECT * FROM " + BOOKS_TABLE_NAME + " WHERE " + BOOK_NAME_COLUMN + " =? ", new String[]{bookName});
+        Book book;
+        if (result.moveToPosition(0)) {
+            book = new Book();
+            do {
+                int id = result.getInt(0);
+                String name = result.getString(1);
+                String path = result.getString(2);
+                int score = result.getInt(3);
+                book.setId(id);
+                book.setName(name);
+                book.setPath(path);
+                book.setScore(score);
+                return book;
+
+            } while (result.moveToNext());
+        }
+        result.close();
+        return null;
+    }
+
+    /**
      * Возвращает книгу по ID
      * @param bookId ID книги
      * @return объект типа {@link Book}
      */
+
+
     public Book getBookById(int bookId) {
         SQLiteDatabase sqLiteDatabase = this.getReadableDatabase();
         Cursor result = sqLiteDatabase.rawQuery("SELECT * FROM " + BOOKS_TABLE_NAME + " WHERE " + BOOK_ID_COLUMN + " =? ", new String[]{String.valueOf(bookId)});
@@ -226,6 +275,26 @@ public class SQLiteDb extends SQLiteOpenHelper {
     }
 
     /**
+     * Возвращает ID книги по ее имени
+     * @param bookName имя книги
+     * @return ID книги
+     */
+
+    private int getBookIdByName(String bookName) {
+        SQLiteDatabase sqLiteDatabase = this.getReadableDatabase();
+        Cursor result = sqLiteDatabase.rawQuery("SELECT * FROM " + BOOKS_TABLE_NAME + " WHERE " + BOOK_NAME_COLUMN + " =? ", new String[]{bookName});
+        if (result.moveToPosition(0)) {
+            do {
+                return result.getInt(0);
+
+            } while (result.moveToNext());
+        }
+        result.close();
+        return -1;
+    }
+
+
+    /**
      * Добавляет в БД запись объекта типа {@link Book}
      * @param book объект типа {@link Book}
      * @param consumer интерфейс, типизированный классом {@link Boolean} для выполнения действий после завершения работы метода
@@ -248,25 +317,26 @@ public class SQLiteDb extends SQLiteOpenHelper {
 
     /**
      * Обновляет рейтинг книги {@link Book}
-     * @param bookId ID книги
-     * @param rating новый рейтинг
+     *
+     * @param bookName имя книги
+     * @param rating   новый рейтинг
      */
-    public void updateBookScore(int bookId, float rating) {
+    public void updateBookScore(String bookName, float rating) {
         SQLiteDatabase sqLiteDatabase = this.getWritableDatabase();
         ContentValues contentValues = new ContentValues();
         contentValues.put(BOOK_SCORE_COLUMN, rating);
 
-        sqLiteDatabase.update(BOOKS_TABLE_NAME, contentValues, BOOK_ID_COLUMN + "=?", new String[]{String.valueOf(bookId)});
+        sqLiteDatabase.update(BOOKS_TABLE_NAME, contentValues, BOOK_NAME_COLUMN + "=?", new String[]{bookName});
         sqLiteDatabase.close();
     }
 
     /**
      * Удаляет книгу {@link Book} по ID
-     * @param bookId ID книги {@link Book}
+     * @param bookName имя книги {@link Book}
      */
-    public void deleteBook(int bookId) {
+    public void deleteBook(String bookName) {
         SQLiteDatabase sqLiteDatabase = this.getWritableDatabase();
-        sqLiteDatabase.delete(BOOKS_TABLE_NAME, BOOK_ID_COLUMN + "=?", new String[]{String.valueOf(bookId)});
+        sqLiteDatabase.delete(BOOKS_TABLE_NAME, BOOK_NAME_COLUMN + "=?", new String[]{bookName});
         sqLiteDatabase.close();
     }
 
@@ -279,7 +349,7 @@ public class SQLiteDb extends SQLiteOpenHelper {
         SQLiteDatabase sqLiteDatabase = this.getWritableDatabase();
         for (Book book : books){
             if (book.isSelected()) {
-                sqLiteDatabase.delete(BOOKS_TABLE_NAME, BOOK_ID_COLUMN + "=?", new String[]{String.valueOf(book.getId())});
+                sqLiteDatabase.delete(BOOKS_TABLE_NAME, BOOK_NAME_COLUMN + "=?", new String[]{book.getName()});
             }
         }
         runnable.run();
@@ -292,13 +362,14 @@ public class SQLiteDb extends SQLiteOpenHelper {
 
     /**
      * Получает слинкованные с полкой книги
-     * @param collectionId ID полки
+     * @param colName имя коллекции
      * @return {@link ArrayList}<{@link Book}>
      */
-    public ArrayList<Book> getLinkedBooks(int collectionId) {
+    public ArrayList<Book> getLinkedBooks(String colName) {
         ArrayList<Book> books = new ArrayList<>();
         SQLiteDatabase sqLiteDatabase = this.getReadableDatabase();
-        Cursor result = sqLiteDatabase.rawQuery("SELECT * FROM " + LINKING_TABLE_NAME + " WHERE " + LINKING_COLLECTION_ID_COLUMN + " =? ", new String[]{String.valueOf(collectionId)});
+        int colId = getCollectionIdByName(colName);
+        Cursor result = sqLiteDatabase.rawQuery("SELECT * FROM " + LINKING_TABLE_NAME + " WHERE " + LINKING_COLLECTION_ID_COLUMN + " =? ", new String[]{String.valueOf(colId)});
 
         if (result.moveToPosition(0)) {
             do {
@@ -312,12 +383,20 @@ public class SQLiteDb extends SQLiteOpenHelper {
         return books;
 
     }
+    /**
+     * Метод для добавления связи между книгой и коллекцией
+     * @param bookName имя книги
+     * @param colName имя коллекции
+     * @param consumer интерфейс для выполнения действий после завершения работы метода
+     */
 
-    public void insertLinkedBook(int bookId, int collectionId, Consumer<Boolean> consumer) {
+    public void insertLinkedBook(String bookName, String colName, Consumer<Boolean> consumer) {
         SQLiteDatabase sqLiteDatabase = this.getWritableDatabase();
+        int colId = getCollectionIdByName(colName);
+        int bookId = getBookIdByName(bookName);
         ContentValues contentValues = new ContentValues();
         contentValues.put(LINKING_BOOK_ID_COLUMN, bookId);
-        contentValues.put(LINKING_COLLECTION_ID_COLUMN, collectionId);
+        contentValues.put(LINKING_COLLECTION_ID_COLUMN, colId);
 
         long result = sqLiteDatabase.insert(LINKING_TABLE_NAME, null, contentValues);
         if (result != (-1)) {
@@ -328,11 +407,20 @@ public class SQLiteDb extends SQLiteOpenHelper {
         sqLiteDatabase.close();
     }
 
-    public void deleteLinkedBook(int bookId, int collectionId) {
+    /**
+     * Метод для удаления связи между книгой и коллекцией
+     * @param bookName имя книги
+     * @param colName имя коллекции
+     */
+
+    public void deleteLinkedBook(String bookName, String colName) {
         SQLiteDatabase sqLiteDatabase = this.getWritableDatabase();
-        sqLiteDatabase.delete(LINKING_TABLE_NAME, LINKING_BOOK_ID_COLUMN + "=?" + " AND " + LINKING_COLLECTION_ID_COLUMN + "=?", new String[]{String.valueOf(bookId), String.valueOf(collectionId)});
+        int colId = getCollectionIdByName(colName);
+        int bookId = getBookIdByName(bookName);
+        sqLiteDatabase.delete(LINKING_TABLE_NAME, LINKING_BOOK_ID_COLUMN + "=?" + " AND " + LINKING_COLLECTION_ID_COLUMN + "=?", new String[]{String.valueOf(bookId), String.valueOf(colId)});
         sqLiteDatabase.close();
     }
+
 
     //endregion
 }

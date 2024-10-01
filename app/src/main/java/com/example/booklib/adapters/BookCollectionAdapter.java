@@ -67,7 +67,6 @@ public class BookCollectionAdapter extends RecyclerView.Adapter<BookCollectionAd
         //holder.collectionNameView.setSelected(true);
         holder.collectionCardView.setOnClickListener(v -> {
             Intent intent = new Intent(context, BookCollectionReadActivity.class);
-            intent.putExtra(BLDictionary.COLLECTION_ID, bookCollection.getId());
             intent.putExtra(BLDictionary.COLLECTION_NAME, holder.collectionNameView.getText().toString());
             context.startActivity(intent);
         });
@@ -98,7 +97,7 @@ public class BookCollectionAdapter extends RecyclerView.Adapter<BookCollectionAd
                     //notifyItemChanged(position);
                     return true;
                 } else if (item.getItemId() == R.id.pu_bkcl_delete){
-                    BLAlertDialog.deleteBookCollectionDialog(context, bookCollection.getId(), () -> {
+                    BLAlertDialog.deleteBookCollectionDialog(context, bookCollection.getName(), () -> {
                         bookCollections.remove(position);
                         notifyItemRemoved(position);
                         notifyItemRangeChanged(position, bookCollections.size());
