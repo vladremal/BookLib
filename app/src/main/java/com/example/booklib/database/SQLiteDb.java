@@ -152,13 +152,15 @@ public class SQLiteDb extends SQLiteOpenHelper {
         ContentValues contentValues = new ContentValues();
         contentValues.put(COLLECTION_NAME_COLUMN, newName);
 
-        long result = sqLiteDatabase.update(COLLECTIONS_TABLE_NAME, contentValues, COLLECTION_NAME_COLUMN + "=?", new String[]{lastName});
-        if (result != (-1)) {
-            consumer.accept(true);
-        } else {
+        int exstColID = getCollectionIdByName(newName);
+        if (exstColID!= (-1)) {
             consumer.accept(false);
+            return;
+        } else {
+            consumer.accept(true);
+            sqLiteDatabase.update(COLLECTIONS_TABLE_NAME, contentValues, COLLECTION_NAME_COLUMN + "=?", new String[]{lastName});
+            sqLiteDatabase.close();
         }
-        sqLiteDatabase.close();
     }
 
     /**

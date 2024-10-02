@@ -89,7 +89,6 @@ public final class BLAlertDialog {
                             } else {
                                 Toast.makeText(context, "Такая полка уже есть!", Toast.LENGTH_SHORT).show();
                             }
-                            consumer.accept(input.getText().toString());
                         });
                     });
             builder.setNegativeButton(R.string.alert_cancel, (dialog, which) -> dialog.cancel());
