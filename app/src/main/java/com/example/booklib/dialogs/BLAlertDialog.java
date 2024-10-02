@@ -82,10 +82,16 @@ public final class BLAlertDialog {
             builder.setView(input);
 
             builder.setPositiveButton(R.string.alert_coll_change_posBtn, (dialog, which) -> {
-                SQLiteDb sqLiteDb = new SQLiteDb(context);
-                sqLiteDb.updateBookCollection(lastCollectionName, input.getText().toString());
-                consumer.accept(input.getText().toString());
-            });
+                        SQLiteDb sqLiteDb = new SQLiteDb(context);
+                        sqLiteDb.updateBookCollection(lastCollectionName, input.getText().toString(), result -> {
+                            if (result) {
+                                consumer.accept(input.getText().toString());
+                            } else {
+                                Toast.makeText(context, "Такая полка уже есть!", Toast.LENGTH_SHORT).show();
+                            }
+                            consumer.accept(input.getText().toString());
+                        });
+                    });
             builder.setNegativeButton(R.string.alert_cancel, (dialog, which) -> dialog.cancel());
             builder.show();
         }
