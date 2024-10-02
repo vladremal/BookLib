@@ -147,13 +147,20 @@ public class SQLiteDb extends SQLiteOpenHelper {
      * @param newName  новое имя колекции
      */
 
-    public void updateBookCollection(String lastName, String newName) {
+    public void updateBookCollection(String lastName, String newName, Consumer<Boolean> consumer) {
         SQLiteDatabase sqLiteDatabase = this.getWritableDatabase();
         ContentValues contentValues = new ContentValues();
         contentValues.put(COLLECTION_NAME_COLUMN, newName);
 
-        sqLiteDatabase.update(COLLECTIONS_TABLE_NAME, contentValues, COLLECTION_NAME_COLUMN + "=?", new String[]{lastName});
-        sqLiteDatabase.close();
+        int exstColID = getCollectionIdByName(newName);
+        if (exstColID!= (-1)) {
+            consumer.accept(false);
+            return;
+        } else {
+            consumer.accept(true);
+            sqLiteDatabase.update(COLLECTIONS_TABLE_NAME, contentValues, COLLECTION_NAME_COLUMN + "=?", new String[]{lastName});
+            sqLiteDatabase.close();
+        }
     }
 
     /**
